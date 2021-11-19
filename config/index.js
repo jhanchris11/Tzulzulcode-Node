@@ -1,9 +1,9 @@
-require('dotenv').config()
-const config = {
-  dev: process.env.MODE,
-  port: process.env.PORT || 4000,
-  username: process.env.USER_NAME,
-  password: process.env.PASSWORD
-}
+require('dotenv').config();
 
-module.exports = config
+module.exports = {
+	devMode: (process.env.DEV_MODE === "true") ? true : false,
+	port: parseInt(process.env.PORT) || 4000,
+	dbName: process.env.DB_NAME,
+	dbUsername: process.env.DB_USERNAME,
+	dbPassword: process.env.DB_PASSWORD	
+};
