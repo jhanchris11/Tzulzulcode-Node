@@ -3,7 +3,7 @@ const config = require('./index');
 
 async function connection() {
 	try {
-		await mongoose.connect(`mongodb+srv://${config.dbUsername}:${config.dbPassword}@dbcluster.ikiuh.mongodb.net/${config.dbName}`,{
+		await mongoose.connect(`mongodb+srv://${config.dbUsername}:${config.dbPassword}@cluster0.tcvfx.mongodb.net/${config.dbName}?retryWrites=true&w=majority`,{
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		});
