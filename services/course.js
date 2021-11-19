@@ -1,32 +1,29 @@
 const CourseModel = require('../models/courses')
-// const multer = require('multer')
-// const configMulter = require('../utils/configMulter')
 const faker = require('faker')
 
-// const upload = multer(configMulter).single('image')
 class Courses {
   async getCourses(req, res, next) {
     try {
       const courses = await CourseModel.find({})
       res.json(courses)
     } catch (error) {
-      console.log(`error `, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
   async newCourses(req, res, next) {
     try {
-      const course = new CourseModel()
-      console.log(course)
-      course.name = req.body.name_course
-      course.price = req.body.price_course
-      course.description = req.body.description_course
-      course.image = faker.image.image()
-      console.log(course)
-      // await course.save()
-      // res.json(course)
+      const course = new CourseModel({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
+        image: faker.image.image()
+      })
+      await course.save()
+
+      res.json(course)
     } catch (error) {
-      console.log(`newCourses`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -42,12 +39,16 @@ class Courses {
 
   async updateCourse(req, res, next) {
     try {
-      const course = await CourseModel.findOneAndUpdate({ _id: req.params.idCourse }, req.body, {
+      let { image, ...rest } = req.body
+      image = faker.image.image()
+      const newCourse = { image, ...rest }
+
+      const course = await CourseModel.findOneAndUpdate({ _id: req.params.idCourse }, newCourse, {
         new: true
       })
       res.json(course)
     } catch (error) {
-      console.log(`updateCourses`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -59,7 +60,7 @@ class Courses {
         msg: 'The course is deleted'
       })
     } catch (error) {
-      console.log(`deleteCourses`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -69,7 +70,7 @@ class Courses {
       const course = await CourseModel.find({ name: RegExp(query, 'i') })
       res.json(course)
     } catch (error) {
-      console.log(`deleteCourses`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -90,15 +91,17 @@ class Courses {
         msg: `${amount} record created`
       })
     } catch (error) {
-      console.log(`generateData`, error)
+      res.status(500).json({ message: e.message })
       next(error)
     }
   }
 
   async getListByPagination(req, res, next) {
     try {
+      const params = req.params.page
+      console.log(params)
     } catch (error) {
-      console.log(`getListByPagination`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -107,7 +110,7 @@ class Courses {
       const courses = await CourseModel.find({})
       res.json({ amount: courses.length })
     } catch (error) {
-      console.log(`countList`, error)
+      res.status(500).json({ message: e.message })
       next()
     }
   }

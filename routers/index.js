@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const CoursesServices = require('../services/course')
-
+const CourseModel = require('../models/courses')
 const Course = new CoursesServices()
 const router = Router()
 
@@ -16,7 +16,7 @@ router.get('/courses/generate-fake-data/:amount', Course.generateFakeData)
 
 router.get('/count', Course.countList)
 
-// router.post('/courses', Course.newCourses)
+router.post('/courses', Course.newCourses)
 
 router.put('/courses/:idCourse', Course.updateCourse)
 

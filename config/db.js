@@ -10,6 +10,7 @@ async function connection() {
     }
   )
 }
+
 connection()
 
 module.exports = mongoose
