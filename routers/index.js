@@ -1,6 +1,5 @@
 const { Router } = require('express')
 const CoursesServices = require('../services/course')
-const CourseModel = require('../models/courses')
 const Course = new CoursesServices()
 const router = Router()
 
@@ -24,6 +23,6 @@ router.delete('/courses/:idCourse', Course.deleteCourse)
 
 router.post('/courses/search/:query', Course.searchCourse)
 
-router.get('/courses/:page', Course.getListByPagination)
+router.get('/pagination', Course.getListByPagination)
 
 module.exports = router

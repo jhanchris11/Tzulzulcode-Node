@@ -6,7 +6,7 @@ class Courses {
     try {
       const courses = await CourseModel.find({})
       res.json(courses)
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -22,7 +22,7 @@ class Courses {
       await course.save()
 
       res.json(course)
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -47,7 +47,7 @@ class Courses {
         new: true
       })
       res.json(course)
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -59,7 +59,7 @@ class Courses {
       res.json({
         msg: 'The course is deleted'
       })
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -69,7 +69,7 @@ class Courses {
       const { query } = req.params
       const course = await CourseModel.find({ name: RegExp(query, 'i') })
       res.json(course)
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -90,17 +90,40 @@ class Courses {
       res.json({
         msg: `${amount} record created`
       })
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
-      next(error)
+      next(e)
     }
   }
 
   async getListByPagination(req, res, next) {
     try {
-      const params = req.params.page
-      console.log(params)
-    } catch (error) {
+      const page = parseInt(req.query.page) || 1
+      const limit = parseInt(req.query.limit)
+      const startIndex = (page - 1) * limit
+      const endIndex = page * limit
+
+      const results = {}
+
+      results.total = await CourseModel.countDocuments().exec()
+
+      if (endIndex < (await CourseModel.countDocuments().exec())) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        }
+      }
+
+      results.items = await CourseModel.find().limit(limit).skip(startIndex).exec()
+
+      res.json(results)
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
@@ -109,7 +132,7 @@ class Courses {
     try {
       const courses = await CourseModel.find({})
       res.json({ amount: courses.length })
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ message: e.message })
       next()
     }
