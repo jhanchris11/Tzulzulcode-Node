@@ -1,32 +1,29 @@
 const CourseModel = require('../models/courses')
-// const multer = require('multer')
-// const configMulter = require('../utils/configMulter')
 const faker = require('faker')
 
-// const upload = multer(configMulter).single('image')
 class Courses {
   async getCourses(req, res, next) {
     try {
       const courses = await CourseModel.find({})
       res.json(courses)
-    } catch (error) {
-      console.log(`error `, error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
   async newCourses(req, res, next) {
     try {
-      const course = new CourseModel()
-      console.log(course)
-      course.name = req.body.name_course
-      course.price = req.body.price_course
-      course.description = req.body.description_course
-      course.image = faker.image.image()
-      console.log(course)
-      // await course.save()
-      // res.json(course)
-    } catch (error) {
-      console.log(`newCourses`, error)
+      const course = new CourseModel({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
+        image: faker.image.image()
+      })
+      await course.save()
+
+      res.json(course)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -42,12 +39,16 @@ class Courses {
 
   async updateCourse(req, res, next) {
     try {
-      const course = await CourseModel.findOneAndUpdate({ _id: req.params.idCourse }, req.body, {
+      let { image, ...rest } = req.body
+      image = faker.image.image()
+      const newCourse = { image, ...rest }
+
+      const course = await CourseModel.findOneAndUpdate({ _id: req.params.idCourse }, newCourse, {
         new: true
       })
       res.json(course)
-    } catch (error) {
-      console.log(`updateCourses`, error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -58,8 +59,8 @@ class Courses {
       res.json({
         msg: 'The course is deleted'
       })
-    } catch (error) {
-      console.log(`deleteCourses`, error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -68,8 +69,8 @@ class Courses {
       const { query } = req.params
       const course = await CourseModel.find({ name: RegExp(query, 'i') })
       res.json(course)
-    } catch (error) {
-      console.log(`deleteCourses`, error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -89,16 +90,41 @@ class Courses {
       res.json({
         msg: `${amount} record created`
       })
-    } catch (error) {
-      console.log(`generateData`, error)
-      next(error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
+      next(e)
     }
   }
 
   async getListByPagination(req, res, next) {
     try {
-    } catch (error) {
-      console.log(`getListByPagination`, error)
+      const page = parseInt(req.query.page) || 1
+      const limit = parseInt(req.query.limit)
+      const startIndex = (page - 1) * limit
+      const endIndex = page * limit
+
+      const results = {}
+
+      results.total = await CourseModel.countDocuments().exec()
+
+      if (endIndex < (await CourseModel.countDocuments().exec())) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        }
+      }
+
+      results.items = await CourseModel.find().limit(limit).skip(startIndex).exec()
+
+      res.json(results)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }
@@ -106,8 +132,8 @@ class Courses {
     try {
       const courses = await CourseModel.find({})
       res.json({ amount: courses.length })
-    } catch (error) {
-      console.log(`countList`, error)
+    } catch (e) {
+      res.status(500).json({ message: e.message })
       next()
     }
   }

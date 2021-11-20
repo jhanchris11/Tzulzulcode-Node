@@ -8,9 +8,6 @@ require('./config/db')
 
 app.use(express.json())
 
-//carpeta publica
-// app.use(express.static('uploads'))
-
 app.use(cors())
 
 app.use('/', routes)
