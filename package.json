@@ -1,11 +1,12 @@
 {
-  "name": "ProyectoNode",
+  "name": "proyecto-node",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +19,6 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "faker": "^5.5.3",
-    "mongoose": "^6.0.13",
-    "multer": "^1.4.3",
-    "shortid": "^2.2.16"
+    "mongoose": "^6.0.13"
   }
 }

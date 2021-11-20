@@ -78,7 +78,7 @@ class Courses {
   async generateFakeData(req, res, next) {
     try {
       const { amount } = req.params
-      console.log(amount)
+
       for (let i = 0; i < amount; i++) {
         const course = new CourseModel()
         course.name = faker.commerce.productName()

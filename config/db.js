@@ -1,19 +1,19 @@
-const mongoose = require('mongoose');
-const config = require('./index');
+const mongoose = require('mongoose')
+const config = require('./index')
 
 async function connection() {
-	try {
-		await mongoose.connect(`mongodb+srv://${config.dbUsername}:${config.dbPassword}@cluster0.tcvfx.mongodb.net/${config.dbName}?retryWrites=true&w=majority`,{
-			useNewUrlParser: true,
-			useUnifiedTopology: true
-		});
-
-		console.log(`Successfully connected to ${config.dbName} database`);
-	} catch(error) {
-		console.log(error);
-	}
+  try {
+    await mongoose.connect(
+      `mongodb+srv://${config.dbUsername}:${config.dbPassword}@${config.clusterName}/${config.dbName}?retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }
+    )
+    console.log(`Successfully connected to ${config.dbName} database`)
+  } catch (e) {
+    throw new e('Failed connection Mongo')
+  }
 }
 
-connection()
-
-module.exports = mongoose;
+module.exports = connection
